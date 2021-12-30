@@ -2,9 +2,9 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "todo-list-aws"
+stack_name = "todo-list-aws-staging"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1pv009go7owc7" #Incluir bucket propio
-s3_prefix = "todo-list-aws"
+s3_prefix = "todo-list-aws-staging"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Stage=\"default\""
