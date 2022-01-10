@@ -63,7 +63,7 @@ class TestDatabaseFunctnios(unittest.TestCase):
         print ('Start: test_get_table')
         # Testing file functions
         from src.todoList import get_table
-        table = get_table()
+        table = get_table(self.dynamodb)
         print ('Table name:' + str(table.name))
         self.assertEqual("todoUnitTestsTable", table.name)
         print ('End: test_get_table')
