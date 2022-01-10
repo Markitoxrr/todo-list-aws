@@ -8,6 +8,11 @@ def create(event, context):
     if 'text' not in data:
         logging.error("Validation failed")
         raise Exception("Couldn't create the todo item.")
+        
+    if data['text'] =='':
+        logging.error("Validation failed")
+        raise Exception("Field text is empty. Couldn't create the todo item.")
+        
     item = todoList.put_item(data['text'])
     # create a response
     response = {

@@ -8,7 +8,7 @@ import os
 import json
 
 @mock_dynamodb2
-class TestDatabaseFunctions(unittest.TestCase):
+class TestDatabaseFunctnios(unittest.TestCase):
     def setUp(self):
         print ('---------------------')
         print ('Start: setUp')
@@ -58,6 +58,15 @@ class TestDatabaseFunctions(unittest.TestCase):
         #self.assertIn('todoTable', self.table_local.name)
         print ('End: test_table_exists')
         
+    def test_get_table(self):
+        print ('---------------------')
+        print ('Start: test_get_table')
+        # Testing file functions
+        from src.todoList import get_table
+        table = get_table()
+        print ('Table name:' + str(table.name))
+        self.assertEqual("todoUnitTestsTable", table.name)
+        print ('End: test_get_table')
 
     def test_put_todo(self):
         print ('---------------------')
@@ -118,8 +127,8 @@ class TestDatabaseFunctions(unittest.TestCase):
         print ('Response GetItems' + str(result))
         self.assertTrue(len(result) == 1)
         self.assertTrue(result[0]['text'] == self.text)
+        self.assertRaises(TypeError, len(result) == 0)
         print ('End: test_list_todo')
-
 
     def test_update_todo(self):
         print ('---------------------')
@@ -134,6 +143,10 @@ class TestDatabaseFunctions(unittest.TestCase):
         print ('Response PutItem' + str(responsePut))
         idItem = json.loads(responsePut['body'])['id']
         print ('Id item:' + idItem)
+        self.assertEqual(200, responsePut['statusCode'])
+        responseGet = get_item(
+                idItem,
+                self.dynamodb)
         result = update_item(idItem, updated_text,
                             "false",
                             self.dynamodb)
@@ -181,12 +194,17 @@ class TestDatabaseFunctions(unittest.TestCase):
         from src.todoList import delete_item
         from src.todoList import put_item
         from src.todoList import get_items
+        from src.todoList import get_item
         # Testing file functions
         # Table mock
         responsePut = put_item(self.text, self.dynamodb)
         print ('Response PutItem' + str(responsePut))
         idItem = json.loads(responsePut['body'])['id']
         print ('Id item:' + idItem)
+        self.assertEqual(200, responsePut['statusCode'])
+        responseGet = get_item(
+                idItem,
+                self.dynamodb)
         delete_item(idItem, self.dynamodb)
         print ('Item deleted succesfully')
         self.assertTrue(len(get_items(self.dynamodb)) == 0)
@@ -199,7 +217,6 @@ class TestDatabaseFunctions(unittest.TestCase):
         # Testing file functions
         self.assertRaises(TypeError, delete_item("", self.dynamodb))
         print ('End: test_delete_todo_error')
-
 
 
 if __name__ == '__main__':
