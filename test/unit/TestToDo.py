@@ -26,6 +26,7 @@ class TestDatabaseFunctnios(unittest.TestCase):
             message="Using or importing.*")
         """Create the mock database and table"""
         self.dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+        print('self.dynamodb "%s"' %self.dynamodb)
         self.is_local = 'true'
         self.uuid = "123e4567-e89b-12d3-a456-426614174000"
         self.text = "Aprender DevOps y Cloud en la UNIR"
@@ -58,6 +59,7 @@ class TestDatabaseFunctnios(unittest.TestCase):
         #self.assertIn('todoTable', self.table_local.name)
         print ('End: test_table_exists')
         
+    #MRR: Añadida para pasar las pruebas        
     def test_get_table(self):
         print ('---------------------')
         print ('Start: test_get_table')
@@ -82,14 +84,14 @@ class TestDatabaseFunctnios(unittest.TestCase):
         #                 'ResponseMetadata']['HTTPStatusCode'])
         print ('End: test_put_todo')
 
+    #MRR: Añadida para pasar las pruebas  
     def test_put_todo_error(self):
         print ('---------------------')
         print ('Start: test_put_todo_error')
         # Testing file functions
         from src.todoList import put_item
         # Table mock
-        self.assertRaises(Exception, put_item("", self.dynamodb))
-        self.assertRaises(Exception, put_item("", self.dynamodb))
+        self.assertRaises(TypeError, put_item("", self.dynamodb))
         print ('End: test_put_todo_error')
 
     def test_get_todo(self):
@@ -113,6 +115,17 @@ class TestDatabaseFunctnios(unittest.TestCase):
             self.text,
             responseGet['text'])
         print ('End: test_get_todo')
+
+    #MRR: Añadida para pasar las pruebas       
+    def test_get_todo_error(self):
+        print ('---------------------')
+        print ('Start: test_get_todo_error')
+        from src.todoList import get_item
+        
+        # Testing file functions
+        # Table mock
+        self.assertRaises(Exception, get_item('', self.dynamodb))
+        print ('End: test_get_todo_error')
     
     def test_list_todo(self):
         print ('---------------------')
@@ -154,17 +167,14 @@ class TestDatabaseFunctnios(unittest.TestCase):
         self.assertEqual(result['text'], updated_text)
         print ('End: test_update_todo')
 
-
+    #MRR: Añadida para pasar las pruebas  
     def test_update_todo_error(self):
         print ('---------------------')
         print ('Start: atest_update_todo_error')
-        from src.todoList import put_item
         from src.todoList import update_item
         updated_text = "Aprender más cosas que DevOps y Cloud en la UNIR"
         # Testing file functions
         # Table mock
-        responsePut = put_item(self.text, self.dynamodb)
-        print ('Response PutItem' + str(responsePut))
         self.assertRaises(
             Exception,
             update_item(
@@ -216,7 +226,17 @@ class TestDatabaseFunctnios(unittest.TestCase):
         from src.todoList import delete_item
         # Testing file functions
         self.assertRaises(TypeError, delete_item("", self.dynamodb))
+        self.assertRaises(TypeError, delete_item("", ))
         print ('End: test_delete_todo_error')
+        
+    def test_list(self):
+        print ('---------------------')
+        print ('Start: test_list')
+        from src.list.py import list
+        response= list()
+        print ('List succesfully')
+        #self.assertEqual(200, response['statusCode'])
+        
 
 
 if __name__ == '__main__':

@@ -9,7 +9,10 @@ from botocore.exceptions import ClientError
 
 def get_table(dynamodb=None):
     if not dynamodb:
-        URL = os.environ['ENDPOINT_OVERRIDE']
+        try:
+            URL = os.environ['ENDPOINT_OVERRIDE']
+        except Exception as e:
+            print('I got a error in get_table - reason "%s"' % str(e))
         if URL:
             print('URL dynamoDB:'+URL)
             boto3.client = functools.partial(boto3.client, endpoint_url=URL)
@@ -22,7 +25,7 @@ def get_table(dynamodb=None):
 
 
 def get_item(key, dynamodb=None):
-    table = get_table()
+    table = get_table(dynamodb)
     try:
         result = table.get_item(
             Key={
@@ -33,7 +36,6 @@ def get_item(key, dynamodb=None):
     except ClientError as e:
         print(e.response['Error']['Message'])
     else:
-        print('Result getItem:'+str(result))
         if 'Item' in result:
             return result['Item']
 
@@ -139,7 +141,6 @@ def create_todo_table(dynamodb):
             'WriteCapacityUnits': 1
         }
     )
-
     # Wait until the table exists.
     table.meta.client.get_waiter('table_exists').wait(TableName=tableName)
     if (table.table_status != 'ACTIVE'):
