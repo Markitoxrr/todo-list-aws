@@ -16,13 +16,12 @@ def get_table(dynamodb=None):
         if URL:
             print('URL dynamoDB:'+URL)
             boto3.client = functools.partial(boto3.client, endpoint_url=URL)
-            boto3.resource = functools.partial(boto3.resource,
-                                           endpoint_url=URL)
+            boto3.resource = functools.partial(boto3.resource, endpoint_url=URL)
         dynamodb = boto3.resource("dynamodb")
     # fetch todo from the database
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
-    
     return table
+
 
 def get_item(key, dynamodb=None):
     table = get_table(dynamodb)
@@ -39,7 +38,6 @@ def get_item(key, dynamodb=None):
         if 'Item' in result:
             return result['Item']
             
-
 def get_items(dynamodb=None):
     table = get_table(dynamodb)
     # fetch todo from the database
@@ -117,6 +115,7 @@ def delete_item(key, dynamodb=None):
     else:
         return
 
+
 def create_todo_table(dynamodb):
     # For unit testing
     tableName = os.environ['DYNAMODB_TABLE']
@@ -140,7 +139,6 @@ def create_todo_table(dynamodb):
             'WriteCapacityUnits': 1
         }
     )
-    
     # Wait until the table exists.
     table.meta.client.get_waiter('table_exists').wait(TableName=tableName)
     if (table.table_status != 'ACTIVE'):
