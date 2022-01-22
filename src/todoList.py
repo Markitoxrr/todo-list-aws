@@ -46,9 +46,9 @@ def translate_item(key, target_language, dynamodb=None):
                 'id': key
             }
         )
-        
-        sourceText= str(result['Item']['text'])
-        translate = boto3.client(
+    
+        sourceText=str(result['Item']['text'])
+        translate=boto3.client(
             service_name='translate',
             region_name='us-east-1'
         )
@@ -58,8 +58,8 @@ def translate_item(key, target_language, dynamodb=None):
             TargetLanguageCode=str(target_language)
         )
         print("Translation output: " + str(traductor))
-        result['Item']['text']= traductor.get('TranslatedText')
-        
+        result['Item']['text']=traductor.get('TranslatedText')
+    
     except ClientError as e:
         print(e.response['Error']['Message'])
 
