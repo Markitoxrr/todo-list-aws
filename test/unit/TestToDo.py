@@ -127,6 +127,28 @@ class TestDatabaseFunctnios(unittest.TestCase):
         self.assertRaises(Exception, get_item('', self.dynamodb))
         print ('End: test_get_todo_error')
     
+    def test_translate_todo(self):
+        print ('---------------------')
+        print ('Start: test_translate_todo')
+        from src.todoList import translate_item
+        from src.todoList import put_item
+
+        # Testing file functions
+        # Table mock
+        responsePut = put_item(self.text, self.dynamodb)
+        print ('Response put_item:' + str(responsePut))
+        idItem = json.loads(responsePut['body'])['id']
+        print ('Id item:' + idItem)
+        self.assertEqual(200, responsePut['statusCode'])
+        responseGet = translate_item(
+                idItem, 'en',
+                self.dynamodb)
+        print ('Response Get:' + str(responseGet))
+        self.assertEqual(
+            self.text,
+            responseGet['text'])
+        print ('End: test_translate_todo')
+    
     def test_list_todo(self):
         print ('---------------------')
         print ('Start: test_list_todo')
