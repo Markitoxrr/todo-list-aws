@@ -38,6 +38,36 @@ def get_item(key, dynamodb=None):
             return result['Item']
 
 
+def translate_item(key, target_language, dynamodb=None):
+    table = get_table(dynamodb)
+    try:
+        result = table.get_item(
+            Key={
+                'id': key
+            }
+        )
+
+        sourceText = str(result['Item']['text'])
+        translate = boto3.client(
+            service_name='translate',
+            region_name='us-east-1'
+        )
+        traductor = translate.translate_text(
+            Text=sourceText,
+            SourceLanguageCode='auto',
+            TargetLanguageCode=str(target_language)
+        )
+        print("Translation output: " + str(traductor))
+        result['Item']['text'] = traductor.get('TranslatedText')
+
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+
+    else:
+        if 'Item' in result:
+            return result['Item']
+
+
 def get_items(dynamodb=None):
     table = get_table(dynamodb)
     # fetch todo from the database
