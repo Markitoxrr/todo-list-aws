@@ -6,6 +6,7 @@ import json
 import functools
 from botocore.exceptions import ClientError
 
+
 def get_table(dynamodb=None):
     if not dynamodb:
         URL = os.getenv('ENDPOINT_OVERRIDE', 'Error')
@@ -36,6 +37,7 @@ def get_item(key, dynamodb=None):
         if 'Item' in result:
             return result['Item']
 
+
 def translate_item(key, target_language, dynamodb=None):
     table = get_table(dynamodb)
     try:
@@ -45,18 +47,17 @@ def translate_item(key, target_language, dynamodb=None):
             }
         )
         
-        print("Entra1: " + result['Item']['text'])
         sourceText= str(result['Item']['text'])
-        print("text: " + sourceText)
-        translate = boto3.client(service_name='translate', region_name='us-east-1')
-        print('Entra2')
+        translate = boto3.client(
+            service_name='translate',
+            region_name='us-east-1'
+        )
         traductor = translate.translate_text(
-            Text=sourceText, 
-            SourceLanguageCode='auto', 
+            Text=sourceText,
+            SourceLanguageCode='auto',
             TargetLanguageCode=str(target_language)
         )
         print("Translation output: " + str(traductor))
-        print('Entra3')
         result['Item']['text']= traductor.get('TranslatedText')
         
     except ClientError as e:
