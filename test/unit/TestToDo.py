@@ -135,7 +135,7 @@ class TestDatabaseFunctnios(unittest.TestCase):
 
         # Testing file functions
         # Table mock
-        responsePut = put_item(self.text, self.dynamodb)
+        responsePut = put_item('Aprender DevOps y Cloud en la UNIR', self.dynamodb)
         print ('Response put_item:' + str(responsePut))
         idItem = json.loads(responsePut['body'])['id']
         print ('Id item:' + idItem)
@@ -145,8 +145,8 @@ class TestDatabaseFunctnios(unittest.TestCase):
                 self.dynamodb)
         print ('Response Get:' + str(responseGet))
         self.assertEqual(
-            self.text,
-            responseGet['text'])
+            responseGet['text'], 
+            'Learn DevOps and Cloud at UNIR')
         print ('End: test_translate_todo')
     
     def test_list_todo(self):
